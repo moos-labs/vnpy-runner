@@ -10,7 +10,8 @@ arguments (the pilot run uses the defaults below).
 - Public repo, one workflow: `.github/workflows/run.yml`
 - Trigger is `workflow_dispatch` **only**
 - Python 3.11 via `actions/setup-python`, dependencies from
-  `requirements.txt` (`vnpy`, `vnpy_ctastrategy`, `requests`)
+  `requirements.txt` (`vnpy`, `vnpy_ctastrategy`, `vnpy_sqlite`,
+  `requests`)
 - The step named **Run commands** runs exactly `${{ vars.COMMANDS }}`
 - The final step uploads `results/` as the `results` artifact with
   `actions/upload-artifact@v4` and `if: always()`
@@ -57,6 +58,13 @@ arguments (the pilot run uses the defaults below).
 - Installing `vnpy` still pulls its GUI dependencies (PySide6,
   pyqtgraph, …) because they are hard requirements of the `vnpy`
   package, even though a headless run never opens a window.
+- Database driver: vnpy 4.x split its database drivers into separate
+  packages and `get_database()` defaults to SQLite via `vnpy_sqlite`.
+  A strategy's `on_init()` calls `load_bar(...)`, which goes through
+  `get_database()` even in a backtest — without `vnpy_sqlite` the
+  first run failed with `ModuleNotFoundError: No module named
+  'vnpy_sqlite'`. It is in `requirements.txt` for exactly that call;
+  it returns no pre-start bars, which is fine.
 - Data hand-off: `BacktestingEngine.load_data()` clears
   `history_data` and reloads bars from vnpy's own local database, so
   the script assigns the parsed `BarData` list directly to
