@@ -1,3 +1,4 @@
 vnpy
 vnpy_ctastrategy
+vnpy_sqlite
 requests>=2.32
