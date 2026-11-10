@@ -1,0 +1,3 @@
+vnpy
+vnpy_ctastrategy
+requests>=2.32
